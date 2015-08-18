@@ -40,11 +40,11 @@
 
     this.$container = $('<div class="bootstrap-tagsinput"></div>');
     this.$input = $('<input type="text" placeholder="' + this.placeholderText + '"/>').appendTo(this.$container);
+    this.$ghost = $('<span class="ghost"></span>').appendTo(this.$container);
+
 
     this.$element.after(this.$container);
 
-    var inputWidth = (this.inputSize < 3 ? 3 : this.inputSize) + "em";
-    this.$input.get(0).style.cssText = "width: " + inputWidth + " !important;";
     this.build(options);
   }
 
@@ -357,23 +357,23 @@
         switch (event.which) {
           // BACKSPACE
           case 8:
-            if (doGetCaretPosition($input[0]) === 0) {
-              var prev = $inputWrapper.prev();
-              if (prev) {
-                self.remove(prev.data('item'));
-              }
+          if (doGetCaretPosition($input[0]) === 0) {
+            var prev = $inputWrapper.prev();
+            if (prev) {
+              self.remove(prev.data('item'));
             }
-            break;
+          }
+          break;
 
           // DELETE
           case 46:
-            if (doGetCaretPosition($input[0]) === 0) {
-              var next = $inputWrapper.next();
-              if (next) {
-                self.remove(next.data('item'));
-              }
+          if (doGetCaretPosition($input[0]) === 0) {
+            var next = $inputWrapper.next();
+            if (next) {
+              self.remove(next.data('item'));
             }
-            break;
+          }
+          break;
 
           // LEFT ARROW
           case 37:
@@ -393,38 +393,34 @@
               $input.focus();
             }
             break;
-         default:
+            default:
              // ignore
-         }
+           }
 
         // Reset internal input's size
-        var textLength = $input.val().length,
-            wordSpace = Math.ceil(textLength / 5),
-            size = textLength + wordSpace + 1;
-        $input.attr('size', Math.max(this.inputSize, $input.val().length));
+        $input.next('.ghost').text($input.val());
+        $input.css('width', $input.next('.ghost').width() + 20 + 'px' );
       }, self));
 
       self.$container.on('keypress', 'input', $.proxy(function(event) {
-         var $input = $(event.target);
+        var $input = $(event.target);
 
-         if (self.$element.attr('disabled')) {
-            self.$input.attr('disabled', 'disabled');
-            return;
-         }
+        if (self.$element.attr('disabled')) {
+          self.$input.attr('disabled', 'disabled');
+          return;
+        }
 
-         var text = $input.val(),
-         maxLengthReached = self.options.maxChars && text.length >= self.options.maxChars;
-         if (self.options.freeInput && (keyCombinationInList(event, self.options.confirmKeys) || maxLengthReached)) {
-            self.add(maxLengthReached ? text.substr(0, self.options.maxChars) : text);
-            $input.val('');
-            event.preventDefault();
-         }
+        var text = $input.val(),
+        maxLengthReached = self.options.maxChars && text.length >= self.options.maxChars;
+        if (self.options.freeInput && (keyCombinationInList(event, self.options.confirmKeys) || maxLengthReached)) {
+          self.add(maxLengthReached ? text.substr(0, self.options.maxChars) : text);
+          $input.val('');
+          event.preventDefault();
+        }
 
-         // Reset internal input's size
-         var textLength = $input.val().length,
-            wordSpace = Math.ceil(textLength / 5),
-            size = textLength + wordSpace + 1;
-         $input.attr('size', Math.max(this.inputSize, $input.val().length));
+        // Reset internal input's size
+        $input.next('.ghost').text($input.val());
+        $input.css('width', $input.next('.ghost').width() + 20 + 'px' );
       }, self));
 
       // Remove icon clicked
