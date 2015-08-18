@@ -393,9 +393,9 @@
               $input.focus();
             }
             break;
-            default:
-             // ignore
-           }
+          default:
+            // ignore
+        }
 
         // Reset internal input's size
         $input.next('.ghost').text($input.val());
